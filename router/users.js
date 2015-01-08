@@ -19,8 +19,11 @@ router.post('/', function(req , res , next) {
 	}
 	catch(e) {
 		//return 400 here
-		console.log('invalid data!!!');
-		console.log(e);
+		wrappedResponse({ res : res,
+						  code : 400,
+						  message : 'invalid username or password',
+						  data : 'InvalidCredentials' });
+		return next();
 	}
 	//async parallel init...
 	async.parallel({
@@ -70,6 +73,7 @@ router.post('/', function(req , res , next) {
 							  code : 201,
 							  data : body,
 							  message : '' });
+			next();
 		});
 	});
 });
