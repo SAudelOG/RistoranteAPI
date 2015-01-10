@@ -1,25 +1,32 @@
-var http = require('http');
-var express = require('express');
-var bodyParser = require('body-parser');
-var mongoose = require('mongoose');
-var app = express();
-var router = require('./router');
+var http = require('http'),
+		express = require('express'),
+		bodyParser = require('body-parser'),
+		mongoose = require('mongoose'),
+		config = require('config'),
+		router = require('./router'),
+		app = express(),
+		dbConfig = config.get('database'),
+		serverConfig = config.get('server'),
+		conStr = 'mongodb://' + dbConfig.host + ':' + dbConfig.port + '/' + dbConfig.db,
+		server;
 //config
-
+app.set('port' , serverConfig.port);
+app.set('ip' , serverConfig.ip);
 //middleware
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended : false }));
 //route
 router(app);
-//listen
-var server = http.createServer(app);
+//create server
+server = http.createServer(app); 
 //create connection to the database
-mongoose.connect('mongodb://localhost:27017/playing' , function(err) {
+mongoose.connect(conStr , function(err) {
 	'use strict';
 	if (err) throw err;
-	server.listen(3000, function() {
-		console.log('Server listening on http://localhost:3000');
-	});
+	//make server listen server
+	server.listen(app.get('port'), app.get('ip') , function() {
+			console.log('Server listening on ' + app.get('ip') + ':' + app.get('port'));
+		});
 });
 
 module.exports = server;

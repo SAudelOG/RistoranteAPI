@@ -46,4 +46,22 @@ util.crypto = {
 	}
 };
 
+util.cors = function(spec) {
+	'use strict';
+	var origin = spec.origin,
+			methods = spec.methods,
+			headers = spec.headers;
+	return function(req , res , next) {
+		res.header('Access-Control-Allow-Origin' , origin);
+		res.header('Access-Control-Allow-Methods' , methods);
+		res.header('Access-Control-Allow-Headers' , headers);
+		if (req.method === 'OPTIONS') {
+			res.send();	
+		}
+		else {
+			next();
+		}
+	};
+};
+
 module.exports = util;
