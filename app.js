@@ -1,14 +1,14 @@
 var http = require('http'),
-		express = require('express'),
-		bodyParser = require('body-parser'),
-		mongoose = require('mongoose'),
-		config = require('config'),
-		router = require('./router'),
-		app = express(),
-		dbConfig = config.get('database'),
-		serverConfig = config.get('server'),
-		conStr = 'mongodb://' + dbConfig.host + ':' + dbConfig.port + '/' + dbConfig.db,
-		server;
+	express = require('express'),
+	bodyParser = require('body-parser'),
+	mongoose = require('mongoose'),
+	config = require('config'),
+	router = require('./router'),
+	app = express(),
+	dbConfig = config.get('database'),
+	serverConfig = config.get('server'),
+	conStr = 'mongodb://' + dbConfig.host + ':' + dbConfig.port + '/' + dbConfig.db,
+	server;
 //config
 app.set('port' , serverConfig.port);
 app.set('ip' , serverConfig.ip);

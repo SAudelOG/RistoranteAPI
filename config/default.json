@@ -2,7 +2,8 @@
 	"database" : {
 		"host" : "localhost",
 		"port" : 27017,
-		"db" : "playing"
+		"db" : "playing",
+		"conStr" : "mongodb://localhost:27017/playing"
 	},
 	"server" : {
 		"ip" : "127.0.0.1",
