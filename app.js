@@ -1,3 +1,4 @@
+'use strict';
 var http = require('http'),
 	express = require('express'),
 	bodyParser = require('body-parser'),
@@ -5,13 +6,19 @@ var http = require('http'),
 	config = require('config'),
 	router = require('./router'),
 	app = express(),
-	dbConfig = config.get('database'),
-	serverConfig = config.get('server'),
-	conStr = 'mongodb://' + dbConfig.host + ':' + dbConfig.port + '/' + dbConfig.db,
-	server;
+	server,
+	settings;
+
+//enviornment settings
+if (app.get('env') === 'development') {
+	settings = config.development;
+}
+if (app.get('env') === 'production') {
+	settings = config.production;
+}
 //config
-app.set('port' , serverConfig.port);
-app.set('ip' , serverConfig.ip);
+app.set('port' , settings.server.port);
+app.set('ip' , settings.server.ip);
 //middleware
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended : false }));
@@ -20,8 +27,7 @@ router(app);
 //create server
 server = http.createServer(app); 
 //create connection to the database
-mongoose.connect(conStr , function(err) {
-	'use strict';
+mongoose.connect(settings.database.conStr , function(err) {
 	if (err) throw err;
 	//make server listen server
 	server.listen(app.get('port'), app.get('ip') , function() {

@@ -11,7 +11,9 @@ module.exports = function(app) {
 	app.get('/', function(req , res) {
 		res.json({ message : 'OK' });
 	});
+	//Api functionality
 	app.use('/users' , usersRouter);
+	//Testing 500 handler
 	app.get('/fail' , function(req , res) {
 		next(new Error('testing error'));
 	});
@@ -26,9 +28,9 @@ module.exports = function(app) {
 	//500 responses handler
 	app.use(function(err , req , res , next) {
 		wrappedResponse({ res : res,
-						  code : 500,
-						  message : 'Unable to process request, reach out to the administraror',
-						  data : err });
+						 	 				code : 500,
+						  				message : 'Unable to process request, reach out to the administraror',
+						  				data : err });
 		next();
 	});
 };

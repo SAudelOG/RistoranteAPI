@@ -54,7 +54,7 @@ router.post('/', function(req , res , next) {
 		//save user
 		user.token = results.token;
 		user.password = results.password;
-		var newUser = UserModel(user);
+		var newUser = new UserModel(user);
 		newUser.save(function(err , doc) {
 			if (err) return next(err);
 			var body = {
@@ -84,7 +84,65 @@ router.get('/' , function(req , res , next) {
 //Read user by id
 router.get('/:id' , function(req , res , next) {
 	'use strict';
+	var id = req.params.id;
+	UserModel.findById(id , function(err , user) {
+		var newUser,
+				selectedFields = ['first' , 'last' , 'email'];
+		if (!err && user) {
+			newUser = { id : user._id };
+			selectedFields.forEach(function(field) {
+				if (user[field]) {
+					newUser[field] = user[field];
+				}
+			});
+			return wrappedResponse({ res : res,
+															 code : 200,
+															 data : newUser,
+															 message : '' });
+		}
+		else {
+			if (err.type !== 'ObjectId') return next(err); 
+			if (!user || err.type === 'ObjectId') return wrappedResponse({ res : res,
+																			 															 code : 404,
+															 																			 data : 'InvalidParameter',
+															 																			 message : 'id invalid or not found' });
+		}
+	});
+});
+//Update user by id
+router.put('/:id' , function(req , res , next) {
+	'use strict';
+	var id = req.params.id;
 	
 });
-//eporting router object
+//Delete user by id
+router.delete('/:id' , function(req , res , next) {
+	'use strict';
+	var id = req.params.id;
+	UserModel.findByIdAndRemove(id , function(err , user) {
+		var newUser,
+				selectedFields = ['first' , 'last' , 'email'];
+		if (!err && user) {
+			newUser = { id : user._id };
+			selectedFields.forEach(function(field) {
+				if (user[field]) {
+					newUser[field] = user[field];
+				}
+			});
+			return wrappedResponse({ res : res,
+															 code : 200,
+															 data : newUser,
+															 message : '' });
+		}
+		else {
+			if (err.type !== 'ObjectId') return next(err); 
+			if (!user || err.type === 'ObjectId') return wrappedResponse({ res : res,
+																			 															 code : 404,
+															 																			 data : 'InvalidParameter',
+															 																			 message : 'id invalid or not found' });
+		}
+	
+	});
+});
+//exporting router object
 module.exports = router;
