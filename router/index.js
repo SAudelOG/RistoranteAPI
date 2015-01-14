@@ -1,7 +1,15 @@
 var usersRouter = require('./users.js'),
 		wrappedResponse = require('./../util').wrappedResponse,
 		cors = require('./../util').cors,
-		clientConfig = require('config').get('client');
+		config = require('./../config'),
+		clientConfig;
+
+if (process.env.NODE_ENV === 'development' || process.env.NODE_ENV === undefined) {
+	clientConfig = config.development.client;
+}
+if (process.env.NODE_ENV === 'production') {
+	clientConfig = config.production.client;
+}
 
 module.exports = function(app) {
 	//angular CORS

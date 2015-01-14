@@ -3,8 +3,16 @@ var app = require('./../app'),
 		should = require('should'),
 		MongoClient = require('mongodb').MongoClient,
 		async = require('async'),
-		dbConfig = require('config').get('database'),
+		config = require('./../config'),
 		users;
+
+if (process.env.NODE_ENV === 'development' || process.env.NODE_ENV === undefined) {
+	dbConfig = config.development.database;
+}
+if (process.env.NODE_ENV === 'production') {
+	dbConfig = config.production.database;
+}
+
 
 function cleanDb (cb) {
 	'use strict';

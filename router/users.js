@@ -6,11 +6,11 @@ var express = require('express'),
 		UserModel = require('./../model/user'),
 		wrappedResponse = require('./../util').wrappedResponse,
 		crypto = require('./../util').crypto,
-		config = require('config'),
+		config = require('./../config'),
 		serverConfig;
 
-if (process.env.NODE_ENV === 'development') {
-	serverConfig = config.development.server; 
+if (process.env.NODE_ENV === 'development' || process.env.NODE_ENV === undefined) {
+	serverConfig = config.development.server;
 }
 if (process.env.NODE_ENV === 'production') {
 	serverConfig = config.production.server;
