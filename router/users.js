@@ -6,7 +6,15 @@ var express = require('express'),
 		UserModel = require('./../model/user'),
 		wrappedResponse = require('./../util').wrappedResponse,
 		crypto = require('./../util').crypto,
-		serverConfig = require('config').get('server');
+		config = require('config'),
+		serverConfig;
+
+if (process.env.NODE_ENV === 'development') {
+	serverConfig = config.development.server; 
+}
+if (process.env.NODE_ENV === 'production') {
+	serverConfig = config.production.server;
+}
 //Create user
 router.post('/', function(req , res , next) {
 	'use strict';
