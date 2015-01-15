@@ -1,3 +1,5 @@
+'use strict';
+
 var express = require('express'),
 		assert = require('assert'),
 		async = require('async'),
@@ -17,7 +19,6 @@ if (process.env.NODE_ENV === 'production') {
 }
 //Create user
 router.post('/', function(req , res , next) {
-	'use strict';
 	var user = req.body;
 	//validate user information
 	try {
@@ -80,7 +81,6 @@ router.post('/', function(req , res , next) {
 });
 //Read all users
 router.get('/' , function(req , res , next) {
-	'use strict';
 	UserModel.find({} , function(err , users) {
 		if (err) return next(err);
 		return wrappedResponse({ res : res,
@@ -91,7 +91,6 @@ router.get('/' , function(req , res , next) {
 });
 //Read user by id
 router.get('/:id' , function(req , res , next) {
-	'use strict';
 	var id = req.params.id;
 	UserModel.findById(id , function(err , user) {
 		var newUser,
@@ -119,13 +118,23 @@ router.get('/:id' , function(req , res , next) {
 });
 //Update user by id
 router.put('/:id' , function(req , res , next) {
-	'use strict';
-	var id = req.params.id;
-	
+	var id = req.params.id,
+			body = req.body;
+	UserModel.findById(id , function(err , user) {
+		if (!err && user) {
+					
+		}
+		else {
+			if (err.type !== 'ObjectId') return next(err); 
+			if (!user || err.type === 'ObjectId') return wrappedResponse({ res : res,
+																			 															 code : 404,
+															 																			 data : 'InvalidParameter',
+															 																			 message : 'id invalid or not found' });
+		}
+	}); 	
 });
 //Delete user by id
 router.delete('/:id' , function(req , res , next) {
-	'use strict';
 	var id = req.params.id;
 	UserModel.findByIdAndRemove(id , function(err , user) {
 		var newUser,
