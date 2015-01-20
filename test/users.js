@@ -276,9 +276,9 @@ describe('Users Unit Test' , function() {
 				.end(function(err , res) {
 					var id = res.body.data.id,
 							uUser = {
-								email : '123!@$#@gmail.com',
-								first : '123',
-								last : 'fsdGGF.'
+								email : '1231231245',
+								first : 123,
+								last : 'fsdGGF.#!@'
 							};
 					should(err).not.be.ok;
 					request(app)

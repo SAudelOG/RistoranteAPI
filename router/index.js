@@ -17,7 +17,7 @@ module.exports = function(app) {
 								 methods : clientConfig.methods,
 								 headers : clientConfig.headers }));
 	app.get('/', function(req , res) {
-		res.json({ message : 'Hello!' });
+		res.json({ message : 'OK' });
 	});
 	//Api functionality
 	app.use('/users' , usersRouter);

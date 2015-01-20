@@ -4,6 +4,7 @@ var express = require('express'),
 		assert = require('assert'),
 		async = require('async'),
 		jwt = require('jwt-simple'),
+		_ = require('underscore'),
 		router = express.Router(),
 		UserModel = require('./../model/user'),
 		wrappedResponse = require('./../util').wrappedResponse,
@@ -85,7 +86,9 @@ router.get('/' , function(req , res , next) {
 		if (err) return next(err);
 		return wrappedResponse({ res : res,
 														 code : 200,
-														 data : users,
+														 data : _.map(users , function(user) {
+														 	 return _.pick(user , 'first' , 'last' , 'email'); 
+														 }),
 														 message : '' });
 	});
 });
@@ -93,18 +96,12 @@ router.get('/' , function(req , res , next) {
 router.get('/:id' , function(req , res , next) {
 	var id = req.params.id;
 	UserModel.findById(id , function(err , user) {
-		var newUser,
-				selectedFields = ['first' , 'last' , 'email'];
+		var nUser;
 		if (!err && user) {
-			newUser = { id : user._id };
-			selectedFields.forEach(function(field) {
-				if (user[field]) {
-					newUser[field] = user[field];
-				}
-			});
+			nUser = { id : user._id };
 			return wrappedResponse({ res : res,
 															 code : 200,
-															 data : newUser,
+															 data : _.extend(nUser , _.pick(user , 'first' , 'last' , 'email')),
 															 message : '' });
 		}
 		else {
@@ -122,7 +119,21 @@ router.put('/:id' , function(req , res , next) {
 			body = req.body;
 	UserModel.findById(id , function(err , user) {
 		if (!err && user) {
+			_.extend(user , body);
+			user.save(function(err , doc) {
+				var uUser;
+				console.log(err);
+				if (err) {
 					
+				}
+				else {
+					uUser = { id : doc._id };
+					return wrappedResponse({ res : res,
+																	 code : 200,
+																	 data : _.extend(uUser , _.pick(doc , 'first' , 'last' , 'email')),
+																	 message : '' });
+				}
+			});
 		}
 		else {
 			if (err.type !== 'ObjectId') return next(err); 
