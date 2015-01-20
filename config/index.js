@@ -31,7 +31,7 @@ config.production = {
 		name : 'http://nodejs-pizapi.rhcloud.com'
 	},
 	client : {
-		origin : 'http://nodejs-pizapi.rhcloud.com',
+		origin : 'http://localhost:9001',
 		methods : 'PUT, GET, POST, DELETE, OPTIONS',
 		headers : 'Content-Type, Authorization, Accept'
 	}
