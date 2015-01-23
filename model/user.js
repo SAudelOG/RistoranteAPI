@@ -39,7 +39,7 @@ userSchema
 // @last only text
 userSchema
 	.path('last')
-	.validate(function (value) {
+	.validate(function(value) {
 		try {
 			assert.strictEqual(typeof value , 'string');
 			assert.ok(txtOnly.test(value));
@@ -50,6 +50,19 @@ userSchema
 		return true;
 	} , 'last is invalid');
 
+// @eail only valid email
+userSchema
+	.path('email')
+	.validate(function(value) {
+		try {
+			assert.strictEqual(typeof value , 'string');
+			assert.ok(/^(?:[a-z0-9A-Z_.-]+)@(?:[A-Z0-9a-z_-]+).(?:[a-zA-Z]+)/.test(value));
+		}
+		catch (e) {
+			return false;
+		}
+		return true;
+	} , 'email is invalid');
 
 module.exports = mongoose.model('User' , userSchema);
 

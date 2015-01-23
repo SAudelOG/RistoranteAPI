@@ -121,10 +121,14 @@ router.put('/:id' , function(req , res , next) {
 		if (!err && user) {
 			_.extend(user , body);
 			user.save(function(err , doc) {
-				var uUser;
-				console.log(err);
+				var uUser,
+						error;
 				if (err) {
-					
+					error = _.first(_.values(err.errors));
+					return wrappedResponse({ res : res,
+																	 code : 400,
+																	 data : 'InvalidBody',
+																	 message : error.message });
 				}
 				else {
 					uUser = { id : doc._id };

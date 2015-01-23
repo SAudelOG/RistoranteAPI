@@ -276,9 +276,9 @@ describe('Users Unit Test' , function() {
 				.end(function(err , res) {
 					var id = res.body.data.id,
 							uUser = {
-								email : '1231231245',
-								first : 123,
-								last : 'fsdGGF.#!@'
+								email : 'lastkiss@gm--',
+								first : 123123,
+								last : '!@#!@#!@'
 							};
 					should(err).not.be.ok;
 					request(app)
@@ -293,7 +293,7 @@ describe('Users Unit Test' , function() {
 							body.status.should.equal('error');
 							body.code.should.be.type('number');
 							body.code.should.equal(400);
-							body.data.should.be.an.Object;
+							body.data.should.be.a.String;
 							body.data.should.match(/InvalidBody/);
 							body.message.should.be.a.String;
 							body.message.should.match(/first|last|email is invalid/);
