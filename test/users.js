@@ -1,10 +1,13 @@
+'use strict';
+
 var app = require('./../app'),
 		request = require('supertest'),
 		should = require('should'),
 		MongoClient = require('mongodb').MongoClient,
 		async = require('async'),
 		config = require('./../config'),
-		users;
+		users,
+		dbConfig;
 
 if (process.env.NODE_ENV === 'development' || process.env.NODE_ENV === undefined) {
 	dbConfig = config.development.database;
@@ -15,7 +18,6 @@ if (process.env.NODE_ENV === 'production') {
 
 
 function cleanDb (cb) {
-	'use strict';
 	users.drop(function(err) {
 		if (!err) return cb(null);
 		if (err.errmsg !== 'ns not found') return cb(err);
@@ -28,7 +30,6 @@ function cleanDb (cb) {
 	});
 };
 describe('Users Unit Test' , function() {
-	'use strict';
 	before('Create DB connection' , function(done) {
 		MongoClient.connect(dbConfig.conStr , function(err , db) {
 			if (err) throw err;
@@ -48,7 +49,8 @@ describe('Users Unit Test' , function() {
 		it('Should create a new user' , function(done) {
 			var newUser = {
 				email : 'email@email.com',
-				password : 'password'
+				password : 'password',
+				type : 'local'
 			};
 			request(app) 
 				.post('/users')
@@ -67,8 +69,10 @@ describe('Users Unit Test' , function() {
 					body.message.should.be.type('string');
 					should(body.message).not.be.ok;
 					data.should.be.type('object');
-					data.token.should.be.type('string');
-					data.token.should.not.be.empty;
+					data.token.should.be.an.Object;
+					data.token.hash.should.be.a.String;
+					data.token._id.should.be.a.String;
+					data.token.createdDate.should.be.ok;
 					data.id.should.be.type('string');
 					data.id.should.be.not.be.empty;
 					done();
@@ -77,7 +81,8 @@ describe('Users Unit Test' , function() {
 		it('Should throw InvalidCredentials error when parameters are not valid' , function(done) {
 			var newUser = {
 				email : 'asd123',
-				password : '12345'
+				password : '12345',
+				type : 'local'
 			};
 			request(app)
 				.post('/users')
@@ -108,7 +113,8 @@ describe('Users Unit Test' , function() {
 						i = 0;
 				for (i ; i < 10 ; i += 1) {
 					users.push({ email : 'email' + i + '@gmail.com',
-										 	 password : 'password' });
+										 	 password : 'password',
+											 type : 'local' });
 				}
 				async.each(users , function(user , callback) {
 					request(app)
@@ -153,7 +159,8 @@ describe('Users Unit Test' , function() {
 		it('Should read the information of a user by id' , function(done) {
 			var newUser = {
 				email : 'asd123@gmail.com',
-				password : '12345'
+				password : '12345',
+				type : 'local'
 			};
 			request(app)
 				.post('/users')
@@ -210,7 +217,8 @@ describe('Users Unit Test' , function() {
 		it('Should update a user by id' , function(done) {
 			var nUser = {
 				email : 'example@gmail.com',
-				password : '12345'
+				password : '12345',
+				type : 'local'
 			};
 			request(app)
 				.post('/users')
@@ -266,7 +274,8 @@ describe('Users Unit Test' , function() {
 		it('Should return an InvalidBody error' , function(done) {
 			var nUser = {
 				email : 'example@gmail.com',
-				password : '12345'
+				password : '12345',
+				type : 'local'
 			};
 			request(app)
 				.post('/users')
@@ -309,7 +318,8 @@ describe('Users Unit Test' , function() {
 		it('Should delete a user by id' , function(done) {
 			var newUser = {
 				email : 'asd123@gmail.com',
-				password : '12345'
+				password : '12345',
+				type : 'local'
 			};
 			request(app)
 				.post('/users')

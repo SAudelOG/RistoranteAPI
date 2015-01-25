@@ -26,7 +26,7 @@ router.post('/', function(req , res , next) {
 		assert.strictEqual(typeof user.email , 'string');
 		assert.ok(user.email);
 		assert.ok(/^(?:[a-z0-9A-Z_.-]+)@(?:[A-Z0-9a-z]+).(?:[a-zA-Z]+)/.test(user.email));
-		assert.ok(user.password); 
+		assert.ok(user.password);
 	}
 	catch(e) {
 		//return 400 here
@@ -50,26 +50,32 @@ router.post('/', function(req , res , next) {
 		token : function(callback) {
 			crypto.createSalt(32 , function(err , salt) {
 				if (err) return callback(err , null);
-				var payload = { email : user.email,
-												exp   : 3600 };
-				callback(null , { salt : salt,
-							  	  			hash : jwt.encode(payload , salt , 'HS512') }); 
+				var payload = { email : user.email ,
+												type : user.type };
+				callback(null , { hash : jwt.encode(payload , salt , 'HS512') }); 
 				
 			});
 		}	
 	},
 	//finally
 	function (err , results) {
+		var nStrategy = {},
+				nToken = {};
 		if (err) return next(err);
-		//save user
-		user.token = results.token;
-		user.password = results.password;
+		//create new strategy...
+		nStrategy.password = results.password;
+		nStrategy.type = user.type;
+		//create new token...
+		nToken = results.token;
+		//save user...
 		var newUser = new UserModel(user);
+		newUser.tokens.addToSet(nToken);
+		newUser.strategies.addToSet(nStrategy);
 		newUser.save(function(err , doc) {
 			if (err) return next(err);
 			var body = {
 				id : doc._id,
-				token : doc.token.hash
+				token : doc.tokens[0]
 			};
 			//user inserted, respond with token...
 			res.set('Location' , serverConfig.name + '/users/' + doc._id);

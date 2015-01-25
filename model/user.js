@@ -5,20 +5,58 @@ var mongoose = require('mongoose'),
 		Schema = mongoose.Schema,
 		txtOnly = /^(?:[a-zA-Z])+$/;
 
+//Strategies Schema
+var strategySchema = new Schema({
+	type : {
+		type : String,
+		required : true
+	},
+	password : {
+		salt : { 
+			type : String,
+			required : true
+		},
+		hash : {
+			type : String,
+			required : true
+		}
+	}
+});
 
-//Schema design
+//Token Schema
+var tokenSchema = new Schema({
+	hash : String,
+	createdDate : {
+		type : Date,
+		default : Date.now
+	},
+	expiredDate : {
+		type : Date,
+		expires : '7d'
+	}
+});
+
+//User Schema
 var userSchema = new Schema({
 	first : String,
 	last : String,
-	email : { type : String , unique : true },
-	password : {
-		salt : { type : String , required : true },
-		hash : { type : String , required : true }
+	email : { 
+		type : String , 
+		unique : true 
 	},
-	token : {
-		salt : { type : String , required : true },
-		hash : { type : String , required : true }
-	}
+	birthdate : Date,
+	gender : String,
+	address : {
+		street : String,
+		no : String,
+		city : String,
+		zip : String,
+		state : String,
+		country : String
+	},
+	phone : String,
+	strategies : [strategySchema],
+	tokens : [tokenSchema]   
 });
 
 //custom validation
@@ -50,7 +88,7 @@ userSchema
 		return true;
 	} , 'last is invalid');
 
-// @eail only valid email
+// @email only valid email
 userSchema
 	.path('email')
 	.validate(function(value) {
