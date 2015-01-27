@@ -1,4 +1,5 @@
-var usersRouter = require('./users.js'),
+var usersRouter = require('./users'),
+		tokensRouter = require('./tokens'),
 		wrappedResponse = require('./../util').wrappedResponse,
 		cors = require('./../util').cors,
 		config = require('./../config'),
@@ -21,6 +22,7 @@ module.exports = function(app) {
 	});
 	//Api functionality
 	app.use('/users' , usersRouter);
+	app.use('/security/tokens' , tokensRouter);
 	//Testing 500 handler
 	app.get('/fail' , function(req , res) {
 		next(new Error('testing error'));
