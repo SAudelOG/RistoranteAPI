@@ -1,3 +1,5 @@
+(function(){
+
 'use strict';
 
 var express = require('express'),
@@ -174,3 +176,4 @@ router.delete('/:id' , function(req , res , next) {
 });
 //exporting router object
 module.exports = router;
+})();
